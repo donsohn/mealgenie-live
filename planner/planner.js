@@ -76,6 +76,9 @@ class MealMind {
         this.shoppingView.classList.add('hidden');
         document.getElementById('library-view')?.classList.add('hidden');
 
+        const content = document.getElementById('content');
+        content.scrollTop = 0; // Reset scroll position when switching views
+
         if (viewName === 'planner') this.setupView.classList.remove('hidden');
         if (viewName === 'dashboard') this.dashboardView.classList.remove('hidden');
         if (viewName === 'shopping') this.shoppingView.classList.remove('hidden');
@@ -116,22 +119,28 @@ class MealMind {
 
     renderPlan() {
         this.mealGrid.innerHTML = '';
-        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
         this.currentPlan.forEach((recipe, idx) => {
             const card = document.createElement('div');
             card.className = 'meal-card';
             
-            const hasLunch = this.profile.packLunch ? '<span class="tag lunch">+ LUNCH BOX</span>' : '';
+            const hasLunch = this.profile.packLunch ? '<span class="tag lunch">LUNCH</span>' : '';
             
             card.innerHTML = `
-                <span class="day">${days[idx]} Dinner</span>
+                <span class="day">${days[idx] || 'Extra'} Dinner</span>
                 <h3>${recipe.name}</h3>
                 <div class="meta">
-                    <span class="tag">${recipe.categories[0] || 'Main'}</span>
+                    <button class="remove-btn">REMOVE</button>
                     ${hasLunch}
                 </div>
             `;
+
+            card.querySelector('.remove-btn').onclick = () => {
+                this.currentPlan.splice(idx, 1);
+                this.renderPlan();
+            };
+
             this.mealGrid.appendChild(card);
         });
     }
