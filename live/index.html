@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MealGenie Live - Smart Food Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Live Camera Stream -->
+        <video id="video-stream" autoplay playsinline muted></video>
+        
+        <!-- AR Overlay for Markers -->
+        <div id="ar-overlay"></div>
+
+        <!-- Scanning Animation Layer -->
+        <div id="scan-line"></div>
+
+        <!-- UI Elements -->
+        <header id="status-bar">
+            <div class="logo">Meal<span>Genie</span> Live</div>
+            <div id="connection-status" class="status-indicator online">
+                <span class="dot"></span> LIVE
+            </div>
+        </header>
+
+        <main id="interaction-zone">
+            <div id="voice-indicator">
+                <div class="pulse-ring"></div>
+                <div class="mic-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                </div>
+                <p id="transcript-preview">Listening for commands...</p>
+            </div>
+        </main>
+
+        <!-- Result Card (Hidden by default) -->
+        <div id="result-panel" class="hidden">
+            <div class="pull-bar"></div>
+            <div class="content-wrapper">
+                <div class="recommendation-header">
+                    <span class="badge">TOP PICK</span>
+                    <h2 id="product-name">Organic Roasted Seaweed</h2>
+                </div>
+                <div class="health-rating">
+                    <div class="score-pill">A</div>
+                    <span id="health-summary">Best choice for family nutrition</span>
+                </div>
+                <div class="reasoning-box">
+                    <h3>Why this one?</h3>
+                    <p id="reasoning-text">Contains significantly lower sodium (20mg vs 85mg) and has no added sunflower oil or artificial preservatives compared to the other brands detected.</p>
+                </div>
+                <button id="dismiss-btn">CONTINUE SCANNING</button>
+            </div>
+        </div>
+
+        <!-- Error/Permission Modal -->
+        <div id="permission-overlay" class="hidden">
+            <div class="modal-content">
+                <h2>Camera Access Required</h2>
+                <p>HealthPick needs camera access to see your products and microphone access to hear your questions.</p>
+                <button id="grant-btn">Allow Access</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

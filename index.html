@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MealGenie Live Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #556b2f; --bg: #fdfcf0; --text: #2c3e50; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+        .container { max-width: 600px; padding: 40px; }
+        #logo { font-family: 'Playfair Display', serif; font-size: 48px; margin-bottom: 20px; }
+        #logo span { color: var(--primary); }
+        p { color: #7f8c8d; line-height: 1.6; margin-bottom: 40px; }
+        .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .choice { background: white; padding: 30px; border-radius: 20px; text-decoration: none; color: inherit; border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; }
+        .choice:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .choice h3 { margin: 0 0 10px; color: var(--primary); }
+        .choice span { font-size: 13px; color: #7f8c8d; }
+        @media (max-width: 500px) { .choices { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="logo">Meal<span>Genie</span> Live</div>
+        <p>Your intelligent culinary ecosystem. Plan your week at home, then shop with AR guidance at the store.</p>
+        
+        <div class="choices">
+            <a href="planner/index.html" class="choice">
+                <h3>Planner</h3>
+                <span>AI Week Generation & Shopping Lists</span>
+            </a>
+            <a href="live/index.html" class="choice">
+                <h3>Assistant</h3>
+                <span>Live AR Shopping & Healthy Choice AI</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MealGenie - Intelligent Family Meal Planning</title>
+    <link rel="stylesheet" href="planner.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar Navigation -->
+        <nav id="main-nav">
+            <div class="logo">Meal<span>Genie</span></div>
+            <ul class="nav-items">
+                <li class="active" data-tab="dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>Dashboard</span>
+                </li>
+                <li data-tab="planner">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span>Planner</span>
+                </li>
+                <li data-tab="recipes">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    <span>Library</span>
+                </li>
+                <li data-tab="settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>Profile</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="content">
+            <!-- Setup Profile Section -->
+            <section id="setup-view" class="view">
+                <div class="header">
+                    <h1>Personalize your <span>Genie</span></h1>
+                    <p>Tell MealGenie about your family to generate the perfect weekly plan.</p>
+                </div>
+                
+                <div class="card wizard">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Family Size</label>
+                            <input type="number" id="family-size" value="4">
+                        </div>
+                        <div class="input-group">
+                            <label>Meals for Dinner</label>
+                            <select id="dinner-count">
+                                <option value="3">3 Meals</option>
+                                <option value="4">4 Meals</option>
+                                <option value="5" selected>5 Meals</option>
+                                <option value="7">7 Meals</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Kid Age Range</label>
+                            <select id="kid-age">
+                                <option value="none">No Kids</option>
+                                <option value="toddler">Toddler (1-4)</option>
+                                <option value="school" selected>School Age (5-12)</option>
+                                <option value="teen">Teenager (13+)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Cuisine Mix</label>
+                            <select id="mix-level">
+                                <option value="low">Comfort Favorites</option>
+                                <option value="med" selected>Balanced Mix</option>
+                                <option value="high">Global Explorer</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="pantry-check">
+                        <label class="checkbox-container">
+                            <input type="checkbox" checked id="lunch-pack">
+                            <span class="checkmark"></span>
+                            Generate lunch leftovers for packing
+                        </label>
+                    </div>
+
+                    <button id="generate-btn">GENERATE WEEKLY PLAN</button>
+                    <p style="font-size: 11px; margin-top: 15px; text-align: center;">Note: If using locally, run 'npx serve' to load all 551 recipes.</p>
+                </div>
+            </section>
+
+            <!-- Library View -->
+            <section id="library-view" class="view hidden">
+                <div class="header">
+                    <h1>Recipe <span>Library</span></h1>
+                    <p id="library-count">Loading your 551 favorites...</p>
+                </div>
+                
+                <div id="category-bar" class="pill-bar">
+                    <button class="pill active" data-cat="all">All</button>
+                    <!-- Pills injected here -->
+                </div>
+
+                <div id="library-list" class="meal-grid">
+                    <!-- Library Items injected here -->
+                </div>
+            </section>
+
+            <!-- Dashboard / Result Section -->
+            <section id="dashboard-view" class="view hidden">
+                <div class="header">
+                    <h1>Your Weekly <span>Plan</span></h1>
+                    <div class="actions">
+                        <button class="secondary">EXCHANGE ALL</button>
+                        <button class="primary" id="view-shopping-list">SHOPPING LIST</button>
+                    </div>
+                </div>
+
+                <div id="meal-grid" class="meal-grid">
+                    <!-- Meal Cards injected here -->
+                </div>
+            </section>
+
+            <!-- Shopping List Section -->
+            <section id="shopping-view" class="view hidden">
+                <div class="header">
+                    <h1>Grocery <span>List</span></h1>
+                    <div class="actions">
+                        <button class="secondary" id="back-to-plan">BACK</button>
+                        <button class="primary" id="start-live-shopping">START LIVE SHOPPING</button>
+                    </div>
+                </div>
+                <div class="card shopping-card">
+                    <div id="shopping-list-categories">
+                        <!-- Grouped items injected here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Background Decoration -->
+    <div class="bg-blur"></div>
+
+    <script src="recipes_data.js"></script>
+    <script src="planner.js"></script>
+</body>
+</html>
