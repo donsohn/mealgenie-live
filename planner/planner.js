@@ -196,7 +196,7 @@ class MealMind {
                 e.stopPropagation();
                 this.currentPlan.push(recipe);
                 card.querySelector('.add-recipe-btn').innerText = "ADDED!";
-                card.querySelector('.add-recipe-btn').style.background = "#d4a373";
+                card.querySelector('.add-recipe-btn').style.background = "var(--accent)"; // Emerald/Mint for success
                 
                 // Show dashboard if we have recipes
                 setTimeout(() => this.showView('dashboard'), 500);

@@ -1,12 +1,12 @@
 :root {
-    --primary: #556b2f;
-    --hover: #6b8e23;
-    --bg: #fdfcf0;
-    --text: #2c3e50;
-    --text-light: #7f8c8d;
+    --primary: #6366f1; /* Electric Indigo */
+    --hover: #4f46e5;
+    --bg: #f8fafc; /* Cloud White */
+    --text: #1e293b; /* Midnight Slate */
+    --text-light: #64748b;
     --card-bg: #ffffff;
-    --accent: #d4a373;
-    --border: rgba(0, 0, 0, 0.05);
+    --accent: #10b981; /* Spring Mint */
+    --border: rgba(99, 102, 241, 0.1);
     /* iOS Safe Areas & Dynamic Viewport */
     --safe-top: env(safe-area-inset-top, 20px);
     --safe-bottom: env(safe-area-inset-bottom, 20px);
@@ -174,15 +174,17 @@ p {
 input, select {
     padding: 14px 18px;
     border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1.5px solid var(--border);
     background: white;
     font-family: inherit;
     font-size: 16px;
     outline: none;
     color: var(--text);
-    -webkit-appearance: none; /* Reset for iOS */
+    position: relative;
+    z-index: 10;
+    -webkit-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 15px center;
     background-size: 16px;
@@ -236,13 +238,11 @@ input:focus, select:focus {
     display: flex;
     gap: 10px;
     overflow-x: auto;
-    width: 100%;
-    padding: 10px 10px 20px;
-    margin-bottom: 20px;
+    width: calc(100% + 40px); /* Extend past padding */
+    margin: 0 -20px 30px -20px;
+    padding: 10px 20px 20px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
-    cursor: grab;
 }
 
 .pill-bar::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome/Safari */
@@ -389,10 +389,11 @@ input:focus, select:focus {
     height: 600px;
     background: var(--primary);
     filter: blur(150px);
-    opacity: 0.05;
+    opacity: 0.1;
     top: -100px;
     right: -100px;
-    z-index: 1;
+    z-index: -1; /* Behind everything */
+    pointer-events: none;
 }
 
 button.primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; }
