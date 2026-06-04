@@ -1,18 +1,22 @@
 :root {
-    --primary: #556b2f; /* Sage Green */
+    --primary: #556b2f;
     --hover: #6b8e23;
-    --bg: #fdfcf0; /* Cream */
+    --bg: #fdfcf0;
     --text: #2c3e50;
     --text-light: #7f8c8d;
-    --card-bg: rgba(255, 255, 255, 0.7);
-    --accent: #d4a373; /* Earthy Tan */
+    --card-bg: #ffffff;
+    --accent: #d4a373;
     --border: rgba(0, 0, 0, 0.05);
+    /* iOS Safe Areas */
+    --safe-top: env(safe-area-inset-top, 20px);
+    --safe-bottom: env(safe-area-inset-bottom, 20px);
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -20,56 +24,70 @@ body {
     background-color: var(--bg);
     color: var(--text);
     height: 100vh;
-    overflow: hidden;
+    width: 100vw;
+    overflow: hidden; /* Lock main body */
+    position: fixed;
 }
 
 #app {
     display: flex;
+    flex-direction: column; /* Mobile first: Vertical stack */
     height: 100vh;
-    position: relative;
-    z-index: 2;
+    width: 100vw;
 }
 
-/* Sidebar Navigation */
+/* Bottom Navigation (was sidebar) */
 #main-nav {
-    width: 260px;
-    background: white;
-    border-right: 1px solid var(--border);
-    padding: 40px 24px;
+    width: 100%;
+    height: calc(65px + var(--safe-bottom));
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 10px 15px var(--safe-bottom);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    margin-bottom: 60px;
-    color: var(--text);
-}
-
-.logo span {
-    color: var(--primary);
+    display: none; /* Hide logo on mobile nav */
 }
 
 .nav-items {
-    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin: 0;
 }
 
 .nav-items li {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    margin: 0;
+    flex: 1;
+    justify-content: center;
     border-radius: 12px;
     cursor: pointer;
     color: var(--text-light);
     transition: all 0.2s ease;
-    margin-bottom: 8px;
 }
 
 .nav-items li svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+}
+
+.nav-items li span {
+    font-size: 10px;
+    font-weight: 700;
 }
 
 .nav-items li:hover {
@@ -85,20 +103,25 @@ body {
 /* Main Content Area */
 #content {
     flex: 1;
-    padding: 60px 80px;
+    width: 100%;
+    padding: calc(var(--safe-top) + 20px) 20px calc(80px + var(--safe-bottom));
     overflow-y: auto;
+    overflow-x: hidden; /* No side wiggle */
+    -webkit-overflow-scrolling: touch;
 }
 
 .header {
-    margin-bottom: 40px;
+    margin-bottom: 25px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
 }
 
 h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 42px;
+    font-size: 32px;
     max-width: 500px;
     line-height: 1.1;
 }
@@ -118,8 +141,8 @@ p {
     background: var(--card-bg);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 24px;
-    padding: 40px;
+    border-radius: 20px;
+    padding: 25px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.02);
 }
 
@@ -129,8 +152,8 @@ p {
 
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 15px;
     margin-bottom: 30px;
 }
 
@@ -236,19 +259,21 @@ input:focus, select:focus {
 
 .meal-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
 }
 
 .meal-card {
     background: white;
-    border-radius: 20px;
-    padding: 24px;
+    border-radius: 16px;
+    padding: 15px;
     border: 1px solid var(--border);
     transition: transform 0.3s ease;
     position: relative;
     display: flex;
     flex-direction: column;
+    min-height: 140px;
 }
 
 .meal-card:hover {
@@ -264,9 +289,9 @@ input:focus, select:focus {
 }
 
 .meal-card h3 {
-    font-size: 18px;
+    font-size: 14px;
     margin-bottom: 12px;
-    line-height: 1.3;
+    line-height: 1.2;
 }
 
 .meal-card .meta {
@@ -331,3 +356,18 @@ input:focus, select:focus {
 
 button.primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; }
 button.secondary { background: transparent; border: 1px solid var(--border); padding: 12px 24px; border-radius: 10px; cursor: pointer; }
+
+@media (min-width: 768px) {
+    #app { flex-direction: row; }
+    #main-nav { 
+        width: 260px; height: 100%; position: relative; flex-direction: column; padding: 40px 24px; 
+        border-top: none; border-right: 1px solid var(--border);
+    }
+    .logo { display: block; }
+    .nav-items { flex-direction: column; }
+    .nav-items li { flex-direction: row; gap: 12px; padding: 14px 18px; margin-bottom: 8px; }
+    #content { padding: 60px 80px; }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    .meal-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    h1 { font-size: 42px; }
+}
