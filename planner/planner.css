@@ -396,8 +396,26 @@ input:focus, select:focus {
     pointer-events: none;
 }
 
-button.primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; }
-button.secondary { background: transparent; border: 1px solid var(--border); padding: 12px 24px; border-radius: 10px; cursor: pointer; }
+#start-live-shopping {
+    background: var(--primary);
+    color: white;
+    padding: 18px;
+    border-radius: 14px;
+    border: none;
+    width: 100%;
+    font-weight: 700;
+    margin-top: 20px;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+#back-to-plan {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 10px;
+}
 
 @media (min-width: 768px) {
     #app { flex-direction: row; }

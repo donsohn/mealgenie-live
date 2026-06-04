@@ -236,6 +236,25 @@ class MealMind {
             listContainer.appendChild(group);
         }
     }
+
+    sendToHealthPick() {
+        // Collect all items from the list
+        const list = [
+            "Chicken", "Salmon Fillets", "Ground Turkey", 
+            "Garlic", "Spinach", "Onion", "Scallions", "Lemon",
+            "Olive Oil", "Soy Sauce", "Bread Crumbs", "Pesto"
+        ];
+        
+        // Store in localStorage for the Assistant app to pick up
+        localStorage.setItem('mealmind_shopping_list', JSON.stringify({
+            items: list,
+            plan: this.currentPlan.map(r => r.name),
+            timestamp: new Date().toISOString()
+        }));
+
+        // Redirect to the Assistant (Live) app
+        window.location.href = "../live/index.html";
+    }
 }
 
 window.onclick = () => {
