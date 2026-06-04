@@ -179,8 +179,21 @@ class MealMind {
             card.innerHTML = `
                 <span class="day">${recipe.categories[0] || 'General'}</span>
                 <h3>${recipe.name}</h3>
-                <p style="font-size: 11px; color: #7f8c8d; margin-top: 10px;">${recipe.servings || 'Family'} Servings</p>
+                <button class="add-recipe-btn">SELECT</button>
             `;
+
+            // Selection Logic
+            card.querySelector('.add-recipe-btn').onclick = (e) => {
+                e.stopPropagation();
+                this.currentPlan.push(recipe);
+                card.querySelector('.add-recipe-btn').innerText = "ADDED!";
+                card.querySelector('.add-recipe-btn').style.background = "#d4a373";
+                
+                // Show dashboard if we have recipes
+                setTimeout(() => this.showView('dashboard'), 500);
+                this.renderPlan();
+            };
+
             libContainer.appendChild(card);
         });
     }

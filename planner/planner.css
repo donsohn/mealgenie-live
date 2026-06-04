@@ -7,9 +7,10 @@
     --card-bg: #ffffff;
     --accent: #d4a373;
     --border: rgba(0, 0, 0, 0.05);
-    /* iOS Safe Areas */
+    /* iOS Safe Areas & Dynamic Viewport */
     --safe-top: env(safe-area-inset-top, 20px);
     --safe-bottom: env(safe-area-inset-bottom, 20px);
+    --view-height: 100dvh;
 }
 
 * {
@@ -23,9 +24,9 @@ body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: var(--bg);
     color: var(--text);
-    height: 100vh;
+    height: var(--view-height);
     width: 100vw;
-    overflow: hidden; /* Lock main body */
+    overflow: hidden;
     position: fixed;
 }
 
@@ -292,6 +293,20 @@ input:focus, select:focus {
     font-size: 14px;
     margin-bottom: 12px;
     line-height: 1.2;
+    flex: 1;
+}
+
+.add-recipe-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
 .meal-card .meta {
