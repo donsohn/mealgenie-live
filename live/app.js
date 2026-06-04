@@ -2,7 +2,7 @@
  * HealthPick Live - Core Logic
  */
 
-class HealthPickApp {
+class MealGenieLiveAssistant {
     constructor() {
         this.video = document.getElementById('video-stream');
         this.arOverlay = document.getElementById('ar-overlay');
@@ -13,8 +13,8 @@ class HealthPickApp {
         this.isAnalyzing = false;
         this.detectedProducts = [];
         this.mockProducts = [
-            { id: 1, name: "Seaweed Snacks (Plain)", health: "A", reasoning: "Minimal ingredients, lowest sodium (20mg). No added sugar." },
-            { id: 2, name: "Teriyaki Seaweed", health: "C+", reasoning: "High sugar content from glaze. 120mg sodium per serving." },
+            { id: 1, name: "Seaweed Snacks (Plain)", health: "A", reasoning: "Minimal ingredients, lowest sodium (20mg). Matches your healthy kid-friendly search." },
+            { id: 2, name: "Teriyaki Seaweed", health: "C+", reasoning: "High sugar content from glaze. 120mg sodium per serving. Recommend avoiding." },
             { id: 3, name: "Seaweed Thins", health: "B", reasoning: "Good fiber, but contains palm oil. Moderate sodium." }
         ];
 
@@ -48,9 +48,10 @@ class HealthPickApp {
     checkForStoredList() {
         const stored = localStorage.getItem('mealmind_shopping_list');
         if (stored) {
-            const list = JSON.parse(stored);
-            this.transcriptPreview.innerText = `Ready to shop for ${list.length} meals! Point your camera at ingredients.`;
-            this.speak(`I've loaded your plan for the week. Let's find your ingredients!`);
+            const data = JSON.parse(stored);
+            const count = data.items ? data.items.length : 0;
+            this.transcriptPreview.innerText = `Ready to shop for ${count} items! Scan your first product.`;
+            this.speak(`I've loaded your plan for the week. You have ${count} items to find. Let's start with the produce aisle!`);
         }
     }
 
@@ -184,5 +185,5 @@ class HealthPickApp {
 
 // Start app when DOM is ready
 window.addEventListener('DOMContentLoaded', () => {
-    new HealthPickApp();
+    new MealGenieLiveAssistant();
 });

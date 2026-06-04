@@ -1,11 +1,11 @@
 :root {
-    --primary: #00ffb3;
-    --primary-glow: rgba(0, 255, 179, 0.4);
-    --bg-dark: #0a0a0c;
-    --bg-glass: rgba(18, 18, 22, 0.85);
-    --text-main: #ffffff;
-    --text-dim: #b0b0b8;
-    --accent-red: #ff4d4d;
+    --primary: #6366f1; /* Electric Indigo */
+    --primary-glow: rgba(99, 102, 241, 0.3);
+    --bg-dark: #0f172a; /* Deep Indigo Slate */
+    --bg-glass: rgba(255, 255, 255, 0.9);
+    --text-main: #1e293b;
+    --text-dim: #64748b;
+    --accent: #10b981; /* Spring Mint */
     --safe-area-bottom: env(safe-area-inset-bottom, 20px);
 }
 
@@ -17,7 +17,7 @@
 }
 
 body {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     background: var(--bg-dark);
     color: var(--text-main);
     overflow: hidden;
@@ -29,8 +29,6 @@ body {
     position: relative;
     height: 100%;
     width: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
 /* Camera Stream */
@@ -120,15 +118,14 @@ body {
 }
 
 .logo {
-    font-weight: 600;
-    font-size: 20px;
-    letter-spacing: -0.5px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: white;
 }
 
 .logo span {
     color: var(--primary);
-    margin-left: 4px;
-    font-weight: 300;
 }
 
 .status-indicator {
@@ -316,11 +313,10 @@ h2 {
     border-radius: 12px;
     border: none;
     background: var(--primary);
-    color: var(--bg-dark);
+    color: white;
     font-weight: 700;
     font-size: 14px;
     cursor: pointer;
-    transition: transform 0.2s ease;
 }
 
 #dismiss-btn:active {
