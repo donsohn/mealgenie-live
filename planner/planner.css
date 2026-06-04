@@ -27,14 +27,13 @@ body {
     height: var(--view-height);
     width: 100vw;
     overflow: hidden;
-    position: fixed;
 }
 
 #app {
     display: flex;
-    flex-direction: column; /* Mobile first: Vertical stack */
-    height: 100vh;
-    width: 100vw;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
 /* Bottom Navigation (was sidebar) */
@@ -180,6 +179,13 @@ input, select {
     font-family: inherit;
     font-size: 16px;
     outline: none;
+    color: var(--text);
+    -webkit-appearance: none; /* Reset for iOS */
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
 }
 
 input:focus, select:focus {
@@ -210,6 +216,9 @@ input:focus, select:focus {
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
+    position: sticky;
+    bottom: 0;
+    box-shadow: 0 10px 30px rgba(85, 107, 47, 0.4);
 }
 
 #generate-btn:hover {
