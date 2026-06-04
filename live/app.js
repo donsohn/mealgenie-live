@@ -50,8 +50,11 @@ class MealGenieLiveAssistant {
         if (stored) {
             const data = JSON.parse(stored);
             const count = data.items ? data.items.length : 0;
-            this.transcriptPreview.innerText = `Ready to shop for ${count} items! Scan your first product.`;
-            this.speak(`I've loaded your plan for the week. You have ${count} items to find. Let's start with the produce aisle!`);
+            this.transcriptPreview.innerText = `Guided Mode: ${count} items found.`;
+            this.speak(`Welcome back! I've loaded your shopping list. Let's find those ${count} items.`);
+        } else {
+            this.transcriptPreview.innerText = `Free Scan Mode: Point at any product.`;
+            this.speak(`Welcome to MealGenie Live. I'm ready to help you compare products. Just point your camera at the shelf!`);
         }
     }
 
