@@ -226,22 +226,7 @@ class MealGenieLiveAssistant {
         // Screen click to initialize SpeechSynthesis and Audio Player (browser permission check)
         // We use capturing phase (true) so it triggers on all clicks before stopPropagation
         document.addEventListener('click', () => {
-            if (window.speechSynthesis && !this.speechInitialized) {
-                const u = new SpeechSynthesisUtterance('');
-                window.speechSynthesis.speak(u);
-                this.speechInitialized = true;
-                console.log("Speech synthesis context initialized.");
-            }
-            if (!this.audioPlayerInitialized) {
-                // Play a brief silent note to unlock the Audio element
-                this.audioPlayer.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAAA";
-                this.audioPlayer.play()
-                    .then(() => {
-                        this.audioPlayerInitialized = true;
-                        console.log("Audio player context unlocked.");
-                    })
-                    .catch(e => console.log("Audio unlock failed:", e));
-            }
+            this.unlockAudioAndSpeech();
         }, true);
 
         // Microphone Icon click handler to force listen / trigger recommendation
@@ -250,13 +235,32 @@ class MealGenieLiveAssistant {
             micIcon.style.cursor = 'pointer';
             micIcon.onclick = (e) => {
                 e.stopPropagation();
-                // Unlock audio context for Safari
-                this.audioPlayer.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAAA";
-                this.audioPlayer.play().catch(err => console.log("Mic click audio unlock failed:", err));
-                
+                this.unlockAudioAndSpeech();
                 this.transcriptPreview.innerText = "Querying MealGenie Agent...";
                 this.analyzeAndRecommend();
             };
+        }
+    }
+
+    unlockAudioAndSpeech() {
+        if (window.speechSynthesis && !this.speechInitialized) {
+            try {
+                const u = new SpeechSynthesisUtterance('');
+                window.speechSynthesis.speak(u);
+                this.speechInitialized = true;
+                console.log("Speech synthesis context initialized.");
+            } catch (e) {
+                console.log("Speech synthesis unlock failed:", e);
+            }
+        }
+        if (this.audioPlayer && !this.audioPlayerInitialized) {
+            this.audioPlayer.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAAA";
+            this.audioPlayer.play()
+                .then(() => {
+                    this.audioPlayerInitialized = true;
+                    console.log("Audio player context unlocked.");
+                })
+                .catch(e => console.log("Audio unlock failed:", e));
         }
     }
 
@@ -484,7 +488,11 @@ class MealGenieLiveAssistant {
             }
         };
         
-        this.recognition.start();
+        try {
+            this.recognition.start();
+        } catch (e) {
+            console.warn("Speech recognition immediate start failed:", e);
+        }
     }
 
     async startLiveAnalysis() {
@@ -603,11 +611,7 @@ class MealGenieLiveAssistant {
             // Touch/Click Interaction
             marker.onclick = (e) => {
                 e.stopPropagation();
-                
-                // Synchronously play silence to register user interaction for subsequent async playback on iOS Safari
-                this.audioPlayer.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAAA";
-                this.audioPlayer.play().catch(err => console.log("Marker click audio activation failed:", err));
-                
+                this.unlockAudioAndSpeech();
                 this.selectProduct(product);
             };
             
