@@ -22,6 +22,8 @@ class MealGenieLiveAssistant {
         this.isAnalyzing = false;
         this.selectedProduct = null;
         this.speechInitialized = false;
+        this.audioPlayer = new Audio();
+        this.audioPlayerInitialized = false;
         this.model = null; // MobileNet model
         
         // Retrieve keys from local storage
@@ -241,6 +243,21 @@ class MealGenieLiveAssistant {
                     .catch(e => console.log("Audio unlock failed:", e));
             }
         }, true);
+
+        // Microphone Icon click handler to force listen / trigger recommendation
+        const micIcon = document.getElementById('voice-indicator');
+        if (micIcon) {
+            micIcon.style.cursor = 'pointer';
+            micIcon.onclick = (e) => {
+                e.stopPropagation();
+                // Unlock audio context for Safari
+                this.audioPlayer.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAAA";
+                this.audioPlayer.play().catch(err => console.log("Mic click audio unlock failed:", err));
+                
+                this.transcriptPreview.innerText = "Querying MealGenie Agent...";
+                this.analyzeAndRecommend();
+            };
+        }
     }
 
     checkForStoredList() {
