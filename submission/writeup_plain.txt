@@ -1,0 +1,91 @@
+MealGenie Live: Stateful AI Meal Planner and AR Shopping Assistant
+Subtitle: A Hybrid Local-Cloud Ecosystem Powered by the Google Antigravity SDK
+
+Kaggle Hackathon Track: Personal Assistants / Daily Productivity
+Public Project Demo Link: https://mealgenie-live.vercel.app/
+Code Repository Link: https://github.com/donsohn/mealgenie-live.git
+
+---
+
+1. Problem Statement and Core Value
+
+For busy families, food planning and grocery shopping are major sources of daily cognitive overload. Families struggle with three disconnected tasks:
+1. Meal Planning: Compiling a weekly dinner schedule that respects kids' dietary constraints, matches recipes in their library, and minimizes food waste by packing leftovers.
+2. Shopping List Compilation: Translating plans into portions and grocery categories.
+3. In-Store Shopping: Walking the grocery aisles trying to make healthy choices (e.g. avoiding high-sodium snacks) while holding bags and children.
+
+MealGenie Live solves this by uniting a Stateful AI Meal Planner and a Hands-Free AR Shopping Assistant into a single cohesive ecosystem. It runs as a lightweight, mobile-first web app backed by a Python server built on the Google Antigravity SDK, allowing users to plan at home and get real-time AI guidance in the store.
+
+---
+
+2. System Architecture
+
+MealGenie Live utilizes a Hybrid Local-Cloud Architecture that combines low-latency browser features (vision and speech) with stateful cloud-based LLM reasoning:
+
+Frontend (Client Browser):
+- Suite Hub (index.html): Directs users to either the Planner or the Assistant.
+- Meal Planner (planner/): Manages recipe selection, leftover scheduling, and renders the AI chat panel. Communicates with the backend server via HTTP.
+- AR Assistant (live/): Uses TensorFlow.js (MobileNet) for low-latency in-aisle item classification and Web Speech API for hands-free voice control.
+- LocalStorage Sync: Keeps shopping lists and weekly schedules in sync across both applications locally.
+
+Backend (Python Server):
+- FastAPI endpoints: Exposes /api/chat and /api/plan for real-time frontend integration.
+- Google Antigravity Agent: Coordinates conversational states, maintains context memory across turns, and acts as the orchestrator.
+- FastMCP Recipe Server (mcp_server.py): Operates as a Stdio MCP server, isolating semantic searches and details lookup over the 551 Paprika recipe database.
+
+---
+
+3. Why Agents? The Value of Agentic AI
+
+Standard applications rely on rigid, pre-programmed flows (e.g., standard dropdown filters). For meal planning, this is highly frustrating because family needs change dynamically. An AI Agent is uniquely suited here because:
+- Semantic Understanding: It can reason over natural language requests (e.g. "replace Wednesday's meal with a low-sodium child-friendly version").
+- Tool Usage: The agent can proactively call search tools, lookup ingredients, check user preferences, and rewrite plan databases.
+- Stateful Memory: It maintains conversation history to remember what modifications were made previously, creating a collaborative cooking assistant experience.
+
+---
+
+4. Deep-Dive: Agent and MCP Integration
+
+The backend is running a stateful Agent using google.antigravity configured with custom local tools and an external recipe database via a local MCP Server (backend/mcp_server.py) running FastMCP.
+
+Custom Agent Tools:
+- search_recipes (MCP Tool): Searches the library of 551 recipes for ingredients, categories, or keywords.
+- get_recipe_details (MCP Tool): Fetches prep time, ingredients, and directions for cooking.
+- get_user_profile(ctx) and update_user_profile(...) (Local Tools): Persists and retrieves the user's family parameters (e.g., kid age ranges, allergies) using the agent's ToolContext.
+- set_weekly_meal_plan(days_plan, ctx) (Local Tool): Saves the structured 7-day plan directly into the persistent conversation trajectory.
+
+Two-Way Plan Synchronization:
+When a user chats with the agent ("Can you change Wednesday's dinner to a low-sodium chicken meal?"), the agent uses search_recipes to find matching options, calls set_weekly_meal_plan to rewrite the schedule, and returns its response. The frontend parses this state and instantly updates the interactive calendar cards in the dashboard.
+
+---
+
+5. Security and Safe Deployment Controls
+
+In compliance with hackathon submission safety guidelines, the project contains no hardcoded credentials or API keys:
+1. API Key Injection: The Python backend references GEMINI_API_KEY from environment variables, copying them from a local, Git-ignored .env file.
+2. Explicit .gitignore Protection: Blocks deployment cache files (.vercel/), python virtual environments (venv/), compile files, and local session databases from version control.
+3. Local Storage Privacy: Shoppers can save secondary keys (e.g. ElevenLabs custom TTS voices) in a client settings modal. These are saved in their browser's local sandbox (localStorage) and never reach our servers.
+
+---
+
+6. Setup and Reproduction Guide
+
+Local Backend Server Setup:
+1. Clone the repository and enter the directory:
+   git clone https://github.com/donsohn/mealgenie-live.git
+   cd mealgenie-live
+2. Set up a virtual environment and install dependencies:
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r backend/requirements.txt
+3. Copy the template configuration and fill in your Gemini API Key:
+   cp backend/.env.example backend/.env
+   # Open backend/.env and replace 'your_gemini_api_key_here' with your real API key
+4. Start the backend:
+   python backend/app.py
+   # The server runs locally on http://127.0.0.1:8000.
+
+Frontend Server Setup:
+1. Serve the root directory using any local web server (to enable camera/microphone permissions in the browser):
+   npx serve
+2. Open the displayed local URL in your browser (usually http://localhost:3000) and choose either Planner or Assistant.
