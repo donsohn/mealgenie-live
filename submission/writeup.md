@@ -23,29 +23,15 @@ For busy families, food planning and grocery shopping are major sources of daily
 
 MealGenie Live utilizes a **Hybrid Local-Cloud Architecture** that combines low-latency browser features (vision and speech) with stateful cloud-based LLM reasoning:
 
-```mermaid
-graph TD
-    subgraph Frontend (Client Browser)
-        A[Suite Hub index.html] --> B[Planner planner/index.html]
-        A --> C[Assistant live/index.html]
-        B <--> D[(Browser LocalStorage)]
-        C <--> D
-        B --> E[TF.js MobileNet Classifier]
-        C --> F[Web Speech Voice Command Loop]
-    end
-
-    subgraph Backend (Python Server)
-        G[FastAPI Server] <--> H[Google Antigravity Agent]
-        H <--> I[Gemini API]
-        H <--> J[Tool Registry]
-        J --> K[Search 551 Recipes]
-        J --> L[Get Recipe Details]
-        J --> M[Sync Session State]
-    end
-
-    B <-->|HTTP POST /api/chat & /api/plan| G
-    C <-->|HTTP POST /api/chat| G
-```
+*   **Frontend (Client Browser):**
+    *   **Suite Hub (`index.html`):** Directs users to either the Planner or the Assistant.
+    *   **Meal Planner (`planner/`):** Manages recipe selection, leftover scheduling, and renders the AI chat panel. Communicates with the backend server via HTTP.
+    *   **AR Assistant (`live/`):** Uses **TensorFlow.js (MobileNet)** for low-latency in-aisle item classification and **Web Speech API** for hands-free voice control.
+    *   **LocalStorage Sync:** Keeps shopping lists and weekly schedules in sync across both applications locally.
+*   **Backend (Python Server):**
+    *   **FastAPI endpoints:** Exposes `/api/chat` and `/api/plan` for real-time frontend integration.
+    *   **Google Antigravity Agent:** Coordinates conversational states, maintains context memory across turns, and acts as the orchestrator.
+    *   **FastMCP Recipe Server (`mcp_server.py`):** Operates as a Stdio MCP server, isolating semantic searches and details lookup over the 551 Paprika recipe database.
 
 ---
 
