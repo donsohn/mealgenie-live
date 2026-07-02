@@ -71,7 +71,7 @@ body {
     width: 100%;
     height: 100%;
     z-index: 3;
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 .product-marker {
@@ -188,13 +188,13 @@ body {
 #interaction-zone {
     position: absolute;
     bottom: 120px;
-    left: 0;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 #voice-indicator {
