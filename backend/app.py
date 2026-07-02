@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
@@ -9,7 +10,7 @@ from dotenv import load_dotenv
 # Load env variables from .env if present
 load_dotenv()
 
-from google.antigravity import Agent, LocalAgentConfig, ToolContext
+from google.antigravity import Agent, LocalAgentConfig, ToolContext, types
 
 app = FastAPI(title="MealGenie Live Agent API", version="1.0.0")
 
@@ -25,65 +26,19 @@ app.add_middleware(
 SESSIONS_DIR = Path(__file__).parent / "sessions"
 SESSIONS_DIR.mkdir(exist_ok=True)
 
-# Load recipe database
-recipes_path = Path(__file__).parent.parent / "planner" / "summarized_recipes.json"
-recipes = []
-if recipes_path.exists():
-    with open(recipes_path, "r", encoding="utf-8") as f:
-        recipes = json.load(f)
-    print(f"Loaded {len(recipes)} recipes from database.")
-else:
-    print("Warning: summarized_recipes.json not found.")
-
 # Global in-memory session states as a backup sync cache
 SESSION_STATES = {}
 
-# --- AGENT TOOLS ---
+# --- CONFIGURE MCP SERVERS ---
+# Launch the local FastMCP recipe server using stdio transport in the same python environment
+mcp_servers = [
+    types.McpStdioServer(
+        command=sys.executable,
+        args=[str(Path(__file__).parent / "mcp_server.py")]
+    )
+]
 
-def search_recipes(query: str) -> str:
-    """Searches the local database of 551 recipes by keyword.
-    
-    Args:
-        query: The search term (e.g. "chicken", "salmon", "pesto", "kid friendly", "low sodium").
-    """
-    query_lower = query.lower()
-    matches = []
-    for r in recipes:
-        name = r.get("name", "")
-        ingredients = r.get("ingredients", "")
-        categories = [cat.lower() for cat in r.get("categories", [])]
-        
-        if (query_lower in name.lower() or 
-            query_lower in ingredients.lower() or 
-            any(query_lower in cat for cat in categories)):
-            matches.append({
-                "name": name,
-                "categories": r.get("categories", []),
-                "servings": r.get("servings", "")
-            })
-            if len(matches) >= 15:  # Limit results to avoid token overflow
-                break
-                
-    if not matches:
-        return "No recipes found matching that query."
-    return json.dumps(matches, indent=2)
-
-def get_recipe_details(recipe_name: str) -> str:
-    """Retrieves the full details (ingredients and directions) of a specific recipe.
-    
-    Args:
-        recipe_name: The exact name of the recipe.
-    """
-    for r in recipes:
-        if r.get("name", "").lower() == recipe_name.lower():
-            return json.dumps({
-                "name": r.get("name"),
-                "ingredients": r.get("ingredients"),
-                "directions": r.get("directions"),
-                "categories": r.get("categories"),
-                "servings": r.get("servings")
-            }, indent=2)
-    return f"Recipe '{recipe_name}' not found."
+# --- LOCAL AGENT TOOLS ---
 
 def get_user_profile(ctx: ToolContext) -> str:
     """Retrieves the user's family profile, kid age range, allergies, and diet preferences."""
@@ -162,9 +117,8 @@ async def chat(request: ChatRequest):
     config = LocalAgentConfig(
         save_dir=str(SESSIONS_DIR),
         conversation_id=request.conversation_id,
+        mcp_servers=mcp_servers,
         tools=[
-            search_recipes, 
-            get_recipe_details, 
             get_user_profile, 
             update_user_profile, 
             get_weekly_meal_plan, 
@@ -175,7 +129,8 @@ async def chat(request: ChatRequest):
             "You help users plan meals from their library of 551 recipes, manage leftovers, "
             "and suggest healthy choices for grocery shopping.\n\n"
             "CRITICAL:\n"
-            "1. You have tools to search/get recipes, manage profiles, and save plans. Use them proactively.\n"
+            "1. You have tools provided by our RecipeServer MCP server to search recipes (search_recipes) "
+            "and fetch recipe details (get_recipe_details). Use them proactively to query the database.\n"
             "2. When planning meals, take the user's kid age range, allergies, and diet preferences into account.\n"
             "3. If the user asks to add, remove, or modify a meal in their plan, use `set_weekly_meal_plan` to persist the updated plan.\n"
             "4. Always return the meal plan as a valid JSON list of day/meal items when calling `set_weekly_meal_plan`."
@@ -226,9 +181,8 @@ async def generate_plan(request: PlanRequest):
     config = LocalAgentConfig(
         save_dir=str(SESSIONS_DIR),
         conversation_id=request.conversation_id,
+        mcp_servers=mcp_servers,
         tools=[
-            search_recipes, 
-            get_recipe_details, 
             get_user_profile, 
             update_user_profile, 
             get_weekly_meal_plan, 
@@ -252,7 +206,8 @@ async def generate_plan(request: PlanRequest):
             prompt = (
                 f"Please update my user profile using the tools with kid_age_range='{request.kid_age_range}', "
                 f"allergies='{request.allergies}', diet='{request.diet}'. "
-                f"Then, search my recipes to select healthy meals that suit this profile, and generate a {request.days}-day meal plan. "
+                f"Then, search my recipes using search_recipes tool to select healthy meals that suit this profile, "
+                f"and generate a {request.days}-day meal plan. "
                 "Save this meal plan using the set_weekly_meal_plan tool. "
                 "Finally, explain the plan and list the recipe names you chose."
             )
