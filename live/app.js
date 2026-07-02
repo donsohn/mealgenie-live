@@ -2,6 +2,16 @@
  * MealGenie Live Assistant - Core Logic
  */
 
+// Global Remote Debugging Logger
+window.onerror = function(message, source, lineno, colno, error) {
+    alert("JavaScript Error: " + message + "\nFile: " + source + "\nLine: " + lineno);
+    return false;
+};
+
+window.onunhandledrejection = function(event) {
+    alert("Unhandled Promise Rejection: " + event.reason);
+};
+
 class MealGenieLiveAssistant {
     constructor() {
         this.video = document.getElementById('video-stream');
