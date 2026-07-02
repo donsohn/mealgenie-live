@@ -42,6 +42,7 @@ class MealMind {
         }
 
         this.setupEventListeners();
+        this.setupAgentChat();
     }
 
     setupEventListeners() {
@@ -88,7 +89,7 @@ class MealMind {
         }
     }
 
-    generatePlan() {
+    async generatePlan() {
         // Collect Profile
         this.profile = {
             familySize: parseInt(document.getElementById('family-size').value),
@@ -98,11 +99,58 @@ class MealMind {
             packLunch: document.getElementById('lunch-pack').checked
         };
 
-        // Algorithm: Select recipes
-        // 1. Shuffling for variety
+        // Try AI Agent Generation first
+        try {
+            this.generateBtn.innerText = "GENIE IS THINKING...";
+            this.generateBtn.disabled = true;
+
+            const response = await fetch('http://127.0.0.1:8000/api/plan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    conversation_id: this.agentConversationId,
+                    kid_age_range: this.profile.kidAge,
+                    allergies: "",
+                    diet: this.profile.mixLevel,
+                    days: this.profile.dinnerCount
+                })
+            });
+
+            if (!response.ok) throw new Error('API server returned error');
+
+            const data = await response.json();
+            this.agentConversationId = data.conversation_id;
+            localStorage.setItem('mealgenie_agent_conv_id', this.agentConversationId);
+
+            if (data.weekly_meal_plan && data.weekly_meal_plan.length > 0) {
+                const updatedPlan = [];
+                data.weekly_meal_plan.forEach(item => {
+                    const recipeName = item.meal || item.recipe || item.name;
+                    if (recipeName) {
+                        const match = this.recipes.find(r => r.name.toLowerCase() === recipeName.toLowerCase());
+                        if (match) {
+                            updatedPlan.push(match);
+                        } else {
+                            updatedPlan.push({ name: recipeName, categories: ["AI Choice"], ingredients: "" });
+                        }
+                    }
+                });
+                if (updatedPlan.length > 0) {
+                    this.currentPlan = updatedPlan;
+                    this.renderPlan();
+                    this.showView('dashboard');
+                    return;
+                }
+            }
+        } catch (err) {
+            console.log("Falling back to local plan generation algorithm (Agent offline).", err);
+        } finally {
+            this.generateBtn.innerText = "GENERATE WEEKLY PLAN";
+            this.generateBtn.disabled = false;
+        }
+
+        // Fallback Algorithm: Select recipes locally
         let shuffled = [...this.recipes].sort(() => 0.5 - Math.random());
-        
-        // 2. Filter by "Kid Friendly" if necessary (simple keyword match for demo)
         const isKidFriendly = (r) => {
             if (this.profile.kidAge === 'none') return true;
             const noGo = ['spicy', 'chili', 'bourbon', 'intense'];
@@ -254,6 +302,121 @@ class MealMind {
 
         // Redirect to the Assistant (Live) app
         window.location.href = "../live/index.html";
+    }
+
+    setupAgentChat() {
+        this.chatDrawer = document.getElementById('ai-chat-drawer');
+        this.chatToggle = document.getElementById('ai-chat-toggle');
+        this.chatMessages = document.getElementById('ai-chat-messages');
+        this.chatInput = document.getElementById('ai-chat-input');
+        this.chatSend = document.getElementById('ai-chat-send');
+        
+        this.agentConversationId = localStorage.getItem('mealgenie_agent_conv_id') || null;
+
+        // Toggle Expand/Collapse
+        this.chatToggle.onclick = (e) => {
+            e.stopPropagation();
+            this.chatDrawer.classList.toggle('collapsed');
+        };
+
+        this.chatDrawer.onclick = (e) => {
+            if (this.chatDrawer.classList.contains('collapsed')) {
+                this.chatDrawer.classList.remove('collapsed');
+            }
+        };
+
+        // Send message event
+        this.chatSend.onclick = () => this.sendChatMessage();
+        this.chatInput.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                this.sendChatMessage();
+            }
+        };
+    }
+
+    async sendChatMessage() {
+        const text = this.chatInput.value.trim();
+        if (!text) return;
+
+        // Add user message to UI
+        this.appendChatMessage(text, 'user');
+        this.chatInput.value = '';
+
+        // Add loading state
+        const loadingId = this.appendChatMessage('Thinking...', 'agent loading');
+
+        try {
+            // Get profile values to pass to agent
+            const kidAge = document.getElementById('kid-age').value;
+            const dinnerCount = document.getElementById('dinner-count').value;
+            const familySize = document.getElementById('family-size').value;
+
+            const response = await fetch('http://127.0.0.1:8000/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: text,
+                    conversation_id: this.agentConversationId,
+                    kid_age_range: kidAge,
+                    diet: document.getElementById('mix-level').value,
+                    allergies: ""
+                })
+            });
+
+            if (!response.ok) throw new Error('Server returned error');
+
+            const data = await response.json();
+            
+            // Remove loading indicator
+            const loadingElem = document.getElementById(loadingId);
+            if (loadingElem) loadingElem.remove();
+
+            // Update conversation ID
+            this.agentConversationId = data.conversation_id;
+            localStorage.setItem('mealgenie_agent_conv_id', this.agentConversationId);
+
+            // Add agent response
+            this.appendChatMessage(data.response, 'agent');
+
+            // Handle weekly meal plan sync
+            if (data.weekly_meal_plan && data.weekly_meal_plan.length > 0) {
+                const updatedPlan = [];
+                data.weekly_meal_plan.forEach(item => {
+                    const recipeName = item.meal || item.recipe || item.name;
+                    if (recipeName) {
+                        const match = this.recipes.find(r => r.name.toLowerCase() === recipeName.toLowerCase());
+                        if (match) {
+                            updatedPlan.push(match);
+                        } else {
+                            updatedPlan.push({ name: recipeName, categories: ["AI Choice"], ingredients: "" });
+                        }
+                    }
+                });
+                if (updatedPlan.length > 0) {
+                    this.currentPlan = updatedPlan;
+                    this.renderPlan();
+                    this.showView('dashboard');
+                }
+            }
+        } catch (err) {
+            console.error('Agent communication failed:', err);
+            const loadingElem = document.getElementById(loadingId);
+            if (loadingElem) loadingElem.remove();
+            this.appendChatMessage('Could not connect to MealGenie Agent. Please check that the local server is running at http://127.0.0.1:8000.', 'agent');
+        }
+    }
+
+    appendChatMessage(text, sender) {
+        const msg = document.createElement('div');
+        msg.className = `chat-message ${sender}`;
+        msg.innerText = text;
+        
+        const id = 'msg-' + Math.random().toString(36).substr(2, 9);
+        msg.id = id;
+
+        this.chatMessages.appendChild(msg);
+        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        return id;
     }
 }
 
