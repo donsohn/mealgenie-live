@@ -203,6 +203,8 @@ body {
     align-items: center;
     gap: 15px;
     transition: transform 0.3s ease;
+    pointer-events: auto;
+    cursor: pointer;
 }
 
 .mic-icon {
